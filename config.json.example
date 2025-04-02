@@ -1,0 +1,12 @@
+{
+  "client_id": "YOUR_CLIENT_ID",
+  "client_secret": "YOUR_CLIENT_SECRET",
+  "refresh_token": "YOUR_REFRESH_TOKEN",
+  "login_customer_id": "YOUR_LOGIN_CUSTOMER_ID_WITHOUT_HYPHEN",
+  "customer_ids": [
+    "1234567890",
+    "0987654321"
+  ],
+  "start_date": "2024-01-01",
+  "end_date": "2024-02-01"
+}

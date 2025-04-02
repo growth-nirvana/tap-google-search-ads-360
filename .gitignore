@@ -95,7 +95,7 @@ venv/
 
 # Singer files
 .tap-*
-*config.json
+config.json
 *catalog.json
 *state.json
 *.tap-state
