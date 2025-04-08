@@ -1,5 +1,6 @@
 from singer_sdk.streams.core import Stream
 from singer_sdk.helpers.jsonpath import extract_jsonpath
+from datetime import datetime, timedelta
 from typing import Iterable
 import re
 from tap_search_ads.client import SA360Client
@@ -28,6 +29,12 @@ class SearchAdsStream(Stream):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.client = SA360Client(self)
+
+    def get_date_range(self) -> tuple[str, str]:
+        today = datetime.utcnow().date()
+        start_date = self.config.get("start_date") or str(today - timedelta(days=30))
+        end_date = self.config.get("end_date") or str(today)
+        return start_date, end_date
 
     def get_query(self) -> str:
         raise NotImplementedError("Subclasses must implement `get_query()`")

@@ -29,8 +29,7 @@ class PmaxConversionsStream(SearchAdsStream):
     ).to_dict()
 
     def get_query(self) -> str:
-        start_date = self.config.get("start_date")
-        end_date = self.config.get("end_date")
+        start_date, end_date = self.get_date_range()
         date_filter = ""
         if start_date and end_date:
             date_filter = f"WHERE segments.date BETWEEN '{start_date}' AND '{end_date}'"
