@@ -18,7 +18,7 @@ class TapSearchAds(Tap):
         th.Property("client_id", th.StringType, required=True),
         th.Property("client_secret", th.StringType, required=True),
         th.Property("refresh_token", th.StringType, required=True),
-        th.Property("customer_ids", th.ArrayType(th.StringType), required=True),
+        th.Property("customer_ids", th.StringType, required=True),
         th.Property("start_date", th.StringType, required=False),
         th.Property("end_date", th.StringType, required=False)
     ).to_dict()

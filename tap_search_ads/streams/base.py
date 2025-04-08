@@ -6,7 +6,6 @@ import re
 from tap_search_ads.client import SA360Client
 
 
-
 def to_snake_case(name: str) -> str:
     return re.sub(r'(?<!^)(?=[A-Z])', '_', name).lower()
 
@@ -21,6 +20,7 @@ def flatten_dict(d: dict, parent_key: str = '', sep: str = '.') -> dict:
             items.append((new_key, v))
     return dict(items)
 
+
 class SearchAdsStream(Stream):
     records_jsonpath = "$.results[*]"
     replication_key = None
@@ -28,6 +28,14 @@ class SearchAdsStream(Stream):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+        # Normalize customer_ids: accept string or list
+        raw_ids = self.config.get("customer_ids")
+        if isinstance(raw_ids, str):
+            self.customer_ids = [cid.strip() for cid in raw_ids.split(",")]
+        else:
+            self.customer_ids = raw_ids  # Already a list
+
         self.client = SA360Client(self)
 
     def get_date_range(self) -> tuple[str, str]:
@@ -41,7 +49,7 @@ class SearchAdsStream(Stream):
 
     def get_records(self, context: dict) -> Iterable[dict]:
         query = self.get_query()
-        for customer_id in self.config["customer_ids"]:
+        for customer_id in self.customer_ids:
             response = self.client.generate_report(query, customer_id)
             for row in extract_jsonpath(self.records_jsonpath, input=response):
                 yield flatten_dict(row)
