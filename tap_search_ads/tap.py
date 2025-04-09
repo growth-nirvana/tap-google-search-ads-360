@@ -24,7 +24,6 @@ class TapSearchAds(Tap):
         th.Property("refresh_token", th.StringType, required=True),
         th.Property("login_customer_id", th.StringType, required=True),  # Required for manager context
         th.Property("start_date", th.StringType, required=False),
-        th.Property("end_date", th.StringType, required=False),
     ).to_dict()
 
     def get_all_customer_ids_recursive(self) -> list[str]:

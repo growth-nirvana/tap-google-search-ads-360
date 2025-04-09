@@ -44,11 +44,6 @@ class CampaignsStream(SearchAdsStream):
     ).to_dict()
 
     def get_query(self) -> str:
-        start_date, end_date = self.get_date_range()
-        date_filter = ""
-        if start_date and end_date:
-            date_filter = f"WHERE segments.date BETWEEN '{start_date}' AND '{end_date}'"
-
         return f"""
         SELECT
             campaign.id,
@@ -81,5 +76,5 @@ class CampaignsStream(SearchAdsStream):
             segments.conversion_action_category,
             segments.ad_network_type
         FROM campaign
-        {date_filter}
+        {self.segments_date_filter()}
         """.strip()
