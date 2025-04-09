@@ -3,6 +3,7 @@ from singer_sdk.helpers.jsonpath import extract_jsonpath
 from datetime import datetime, timedelta
 from typing import Iterable
 import re
+
 from tap_search_ads.client import SA360Client
 
 
@@ -12,7 +13,7 @@ def to_snake_case(name: str) -> str:
 def flatten_dict(d: dict, parent_key: str = '', sep: str = '.') -> dict:
     items = []
     for k, v in d.items():
-        k = to_snake_case(k)  # Convert keys to snake_case
+        k = to_snake_case(k)
         new_key = f"{parent_key}{sep}{k}" if parent_key else k
         if isinstance(v, dict):
             items.extend(flatten_dict(v, new_key, sep=sep).items())
@@ -26,16 +27,9 @@ class SearchAdsStream(Stream):
     replication_key = None
     client: SA360Client
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        # Normalize customer_ids: accept string or list
-        raw_ids = self.config.get("customer_ids")
-        if isinstance(raw_ids, str):
-            self.customer_ids = [cid.strip() for cid in raw_ids.split(",")]
-        else:
-            self.customer_ids = raw_ids  # Already a list
-
+    def __init__(self, tap, customer_ids: list[str], *args, **kwargs):
+        super().__init__(tap=tap, *args, **kwargs)
+        self.customer_ids = customer_ids
         self.client = SA360Client(self)
 
     def get_date_range(self) -> tuple[str, str]:
