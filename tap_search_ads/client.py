@@ -4,6 +4,7 @@ from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 import logging
 import json
+import time
 
 logger = logging.getLogger(__name__)
 
@@ -52,6 +53,13 @@ class SA360Client:
         logger.info(f"Response body: {response.text}")
         
         if response.status_code != 200:
+            error_data = response.json()
+            error_details = error_data.get('error', {}).get('details', [])
+            for detail in error_details:
+                if detail.get('errorCode', {}).get('quotaError') == 'RESOURCE_EXHAUSTED':
+                    logger.warning("Quota exhausted. Waiting 960 seconds before retrying...")
+                    time.sleep(960)
+                    continue  # Retry the request
             error_msg = f"API request failed with status {response.status_code}"
             try:
                 error_data = response.json()
