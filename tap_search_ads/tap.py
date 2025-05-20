@@ -11,6 +11,7 @@ from tap_search_ads.streams.floodlight_activities import FloodlightActivitiesStr
 from tap_search_ads.streams.pmax_conversions import PmaxConversionsStream
 from tap_search_ads.streams.conversion_actions import ConversionActionsStream
 from tap_search_ads.streams.campaign_conversions import CampaignConversionsStream
+from tap_search_ads.streams.stream_floodlight_activities_new_api import FloodlightActivitiesNewApiStream
 
 class TapSearchAds(Tap):
     name = "tap-search-ads"
@@ -43,6 +44,7 @@ class TapSearchAds(Tap):
             ConversionActionsStream,
             CustomersStream,
             FloodlightActivitiesStream,
+            FloodlightActivitiesNewApiStream,
             KeywordsStream,
             PmaxConversionsStream,
         ]

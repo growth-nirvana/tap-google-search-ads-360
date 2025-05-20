@@ -1,62 +1,114 @@
-
 # Tap Google Search Ads 360
 
-A Singer tap for integrating Google Search Ads 360 data with external systems.
+A Singer tap for extracting data from Google Search Ads 360 (SA360).
 
-## Overview
+## Setup
 
-This project implements a **Singer tap** to extract data from **Google Search Ads 360** using their API. It supports multiple customer IDs, automatic date filtering, and more.
-
-## Features
-
-- Retrieve data from Google Search Ads 360 for ad groups, campaigns, and customers.
-- Supports date filtering for each stream.
-- Easily configurable using `config.json`.
-
-## Installation
-
-### Prerequisites
-
-Ensure you have Python 3.6+ and pip installed.
-
-### Clone the repository
-
+1. Create a Python virtual environment:
 ```bash
-git clone https://github.com/growth-nirvana/tap-google-search-ads-360.git
-cd tap-google-search-ads-360
+python -m venv .venv
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
 ```
 
-### Setup a virtual environment
-
+2. Install the tap:
 ```bash
-python3 -m venv .venv
-source .venv/bin/activate  # On Windows use `.venv\Scriptsctivate`
+pip install -e .
 ```
 
-### Install dependencies
-
-```bash
-pip install -r requirements.txt
+3. Create a config.json file with your credentials:
+```json
+{
+    "client_id": "your_client_id",
+    "client_secret": "your_client_secret",
+    "refresh_token": "your_refresh_token",
+    "login_customer_id": "your_login_customer_id",
+    "customer_ids": "customer_id1,customer_id2",
+    "start_date": "2024-01-01"  # Optional
+}
 ```
 
-### Configuration
+## Usage
 
-Copy the example config file to `config.json`:
+### 1. Generate Catalog
 
-```bash
-cp config.json.example config.json
-```
-
-Edit the `config.json` file with your credentials and configuration details.
-
-## Running the Tap
-
-To run the tap and start syncing data, use:
+First, generate a catalog file that defines the data structure:
 
 ```bash
-tap-search-ads --config config.json --catalog catalog.json --discover  # For discovering streams
-tap-search-ads --config config.json --catalog catalog.json  # For syncing data
+tap-search-ads --config config.json --discover > catalog.json
 ```
+
+The catalog.json file contains:
+- Schema definitions for each stream (table)
+- Available fields and their data types
+- Stream metadata and configuration
+
+### 2. Run the Tap
+
+To extract data and output to a file:
+
+```bash
+tap-search-ads --config config.json --catalog catalog.json --state state.json > output.json
+```
+
+Command breakdown:
+- `tap-search-ads`: The main command
+- `--config config.json`: Configuration file with credentials
+- `--catalog catalog.json`: Data structure definition
+- `--state state.json`: Tracks sync progress for incremental syncs
+- `> output.json`: Redirects output to a file
+
+### Command Components
+
+#### config.json
+Contains your SA360 credentials and settings:
+- `client_id`: OAuth client ID
+- `client_secret`: OAuth client secret
+- `refresh_token`: OAuth refresh token
+- `login_customer_id`: Your SA360 login customer ID
+- `customer_ids`: Comma-separated list of customer IDs to sync
+- `start_date`: (Optional) Start date for historical data
+
+#### catalog.json
+Defines the data structure:
+- Available streams (tables)
+- Field definitions and types
+- Stream properties and settings
+- Generated using the `--discover` flag
+
+#### state.json
+Tracks sync progress:
+- Last successful sync for each stream
+- Enables incremental syncs
+- Updated after each successful sync
+
+#### output.json
+Contains the extracted data:
+- Records in Singer format
+- One record per line
+- JSON format with schema information
+
+## Available Streams
+
+The tap includes the following streams:
+- Ad Groups
+- Ad Group Ads
+- Ad Group Conversions
+- Ad Group Conversion Actions
+- Campaigns
+- Campaign Conversions
+- Conversion Actions
+- Customers
+- Floodlight Activities
+- Keywords
+- Performance Max Conversions
+
+## Development
+
+To add new streams or modify existing ones:
+1. Create a new stream class in `tap_search_ads/streams/`
+2. Inherit from `SearchAdsStream`
+3. Define the schema and query
+4. Add the stream to `tap.py`
 
 ## License
 
