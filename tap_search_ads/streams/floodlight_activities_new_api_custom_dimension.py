@@ -1,8 +1,9 @@
 from singer_sdk import typing as th
 from tap_search_ads.streams.base import SearchAdsStream
 
-class FloodlightActivitiesNewApiStream(SearchAdsStream):
-    name = "stream_floodlight_activities_new_api"
+class FloodlightActivitiesNewApiCustomDimensionStream(SearchAdsStream):
+    
+    name = "floodlight_activities_new_api_custom_dimension"
     primary_keys = ["ad_group.id", "segments.date"]
     replication_key = "segments.date"
 
@@ -10,6 +11,7 @@ class FloodlightActivitiesNewApiStream(SearchAdsStream):
         # Dimensions
         th.Property("ad_group.id", th.StringType),
         th.Property("ad_group.name", th.StringType),
+        th.Property("ad_group.creation_time", th.DateTimeType),
         th.Property("campaign.id", th.StringType),
         th.Property("campaign.name", th.StringType),
         th.Property("customer.account_type", th.StringType),
@@ -20,6 +22,7 @@ class FloodlightActivitiesNewApiStream(SearchAdsStream):
         # Segments
         th.Property("segments.conversion_action_name", th.StringType),
         th.Property("segments.date", th.StringType),
+        th.Property("segments.conversion_custom_dimensions", th.StringType),
 
         # Metrics
         th.Property("metrics.all_conversions", th.NumberType),
@@ -36,11 +39,15 @@ class FloodlightActivitiesNewApiStream(SearchAdsStream):
     ).to_dict()
 
     def get_query(self, **kwargs) -> str:
+        custom_dimension_id = kwargs.get("custom_dimension_id")
+        custom_dimension_line = f"conversion_custom_dimensions.id[{custom_dimension_id}]," if custom_dimension_id else ""
+
         return f"""
         SELECT
             -- Dimensions
             ad_group.id,
             ad_group.name,
+            ad_group.creation_time,
             campaign.id,
             campaign.name,
             customer.account_type,
@@ -51,6 +58,7 @@ class FloodlightActivitiesNewApiStream(SearchAdsStream):
             -- Segments
             segments.conversion_action_name,
             segments.date,
+            {custom_dimension_line}
 
             -- Metrics
             metrics.all_conversions,
@@ -66,4 +74,4 @@ class FloodlightActivitiesNewApiStream(SearchAdsStream):
             metrics.cross_device_conversions_value
         FROM ad_group
         {self.segments_date_filter()}
-        """.strip() 
+        """.strip()

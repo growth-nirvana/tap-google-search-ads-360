@@ -19,7 +19,7 @@ class CustomersStream(SearchAdsStream):
         th.Property("customer.engine_id", th.StringType),
     ).to_dict()
 
-    def get_query(self) -> str:
+    def get_query(self, **kwargs) -> str:
         return """
         SELECT
           customer.id,
