@@ -14,7 +14,7 @@ class ConversionCustomVariablesStream(SearchAdsStream):
         th.Property("conversion_custom_variable.floodlight_conversion_custom_variable_info.floodlight_variable_type", th.StringType),
     ).to_dict()
 
-    def get_query(self) -> str:
+    def get_query(self, **kwargs) -> str:
         return """
         SELECT 
             customer.id,
