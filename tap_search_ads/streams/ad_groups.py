@@ -27,7 +27,7 @@ class AdGroupsStream(SearchAdsStream):
         th.Property("segments.date", th.StringType)
     ).to_dict()
 
-    def get_query(self) -> str:
+    def get_query(self, **kwargs) -> str:
         return f"""
         SELECT
             ad_group.id,

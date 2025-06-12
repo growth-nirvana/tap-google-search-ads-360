@@ -68,12 +68,14 @@ class SearchAdsStream(Stream):
         end_date = self.get_end_date()
         return f"WHERE segments.date BETWEEN '{start_date}' AND '{end_date}'"
 
-    def get_query(self) -> str:
+    def get_query(self, **kwargs) -> str:
         raise NotImplementedError("Subclasses must implement `get_query()`")
 
     def get_records(self, context: dict) -> Iterable[dict]:
-        query = self.get_query()
+        custom_conversion_ids = self.config.get("conversion_custom_dimension_ids", {})
         for customer_id in self.customer_ids:
+            custom_dimension_id = custom_conversion_ids.get(customer_id)
+            query = self.get_query(custom_dimension_id=custom_dimension_id)
             response = self.client.generate_report(query, customer_id)
             for row in extract_jsonpath(self.records_jsonpath, input=response):
                 yield flatten_dict(row)

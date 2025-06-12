@@ -111,3 +111,6 @@ __pycache__/
 # Miscellaneous
 .DS_Store
 Thumbs.db
+
+# Output
+output.json

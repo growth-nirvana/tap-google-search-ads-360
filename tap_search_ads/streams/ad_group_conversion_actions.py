@@ -25,7 +25,7 @@ class AdGroupConversionActionsStream(SearchAdsStream):
         th.Property("segments.conversion_action_name", th.StringType)
     ).to_dict()
 
-    def get_query(self) -> str:
+    def get_query(self, **kwargs) -> str:
         return f"""
         SELECT
             ad_group.id,

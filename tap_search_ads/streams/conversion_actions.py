@@ -17,7 +17,7 @@ class ConversionActionsStream(SearchAdsStream):
         th.Property("conversion_action.floodlight_settings.activity_group_tag", th.StringType),
     ).to_dict()
 
-    def get_query(self) -> str:
+    def get_query(self, **kwargs) -> str:
         return """
         SELECT
             conversion_action.id,

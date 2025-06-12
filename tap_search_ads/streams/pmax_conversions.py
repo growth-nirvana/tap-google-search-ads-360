@@ -28,7 +28,7 @@ class PmaxConversionsStream(SearchAdsStream):
         th.Property("segments.conversion_action", th.StringType)
     ).to_dict()
 
-    def get_query(self) -> str:
+    def get_query(self, **kwargs) -> str:
         return f"""
         SELECT
             campaign.id,
