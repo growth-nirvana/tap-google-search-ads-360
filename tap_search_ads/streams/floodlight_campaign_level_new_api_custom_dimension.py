@@ -12,10 +12,11 @@ class FloodlightCampaignLevelNewApiCustomDimensionStream(SearchAdsStream):
         th.Property("campaign.id", th.StringType),
         th.Property("campaign.name", th.StringType),
         th.Property("customer.account_type", th.StringType),
+        th.Property("customer.currency_code", th.StringType),
         th.Property("customer.descriptive_name", th.StringType),
         th.Property("customer.resource_name", th.StringType),
         th.Property("customer.id", th.StringType),
-
+        
         # Segments
         th.Property("segments.conversion_action_name", th.StringType),
         th.Property("segments.date", th.StringType),
@@ -47,6 +48,7 @@ class FloodlightCampaignLevelNewApiCustomDimensionStream(SearchAdsStream):
             campaign.id,
             campaign.name,
             customer.account_type,
+            customer.currency_code,
             customer.descriptive_name,
             customer.resource_name,
             customer.id,
